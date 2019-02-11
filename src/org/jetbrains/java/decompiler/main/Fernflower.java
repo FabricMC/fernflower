@@ -119,4 +119,8 @@ public class Fernflower implements IDecompiledData {
       return null;
     }
   }
+
+  public StructContext getStructContext() {
+    return structContext;
+  }
 }

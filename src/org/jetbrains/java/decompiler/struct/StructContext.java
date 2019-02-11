@@ -157,6 +157,10 @@ public class StructContext {
     }
   }
 
+  public Map<String, ContextUnit> getUnits() {
+    return units;
+  }
+
   public Map<String, StructClass> getClasses() {
     return classes;
   }

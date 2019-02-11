@@ -20,20 +20,20 @@ public class ContextUnit {
   public static final int TYPE_JAR = 1;
   public static final int TYPE_ZIP = 2;
 
-  private final int type;
-  private final boolean own;
+  protected final int type;
+  protected final boolean own;
 
-  private final String archivePath;  // relative path to jar/zip
-  private final String filename;     // folder: relative path, archive: file name
-  private final IResultSaver resultSaver;
-  private final IDecompiledData decompiledData;
+  protected final String archivePath;  // relative path to jar/zip
+  protected final String filename;     // folder: relative path, archive: file name
+  protected final IResultSaver resultSaver;
+  protected final IDecompiledData decompiledData;
 
-  private final List<String> classEntries = new ArrayList<>();  // class file or jar/zip entry
-  private final List<String> dirEntries = new ArrayList<>();
-  private final List<String[]> otherEntries = new ArrayList<>();
+  protected final List<String> classEntries = new ArrayList<>();  // class file or jar/zip entry
+  protected final List<String> dirEntries = new ArrayList<>();
+  protected final List<String[]> otherEntries = new ArrayList<>();
 
-  private List<StructClass> classes = new ArrayList<>();
-  private Manifest manifest;
+  protected List<StructClass> classes = new ArrayList<>();
+  protected Manifest manifest;
 
   public ContextUnit(int type, String archivePath, String filename, boolean own, IResultSaver resultSaver, IDecompiledData decompiledData) {
     this.type = type;

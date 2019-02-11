@@ -19,11 +19,11 @@ public class DecompilerContext {
   public static final String CURRENT_CLASS_NODE = "CURRENT_CLASS_NODE";
   public static final String CURRENT_METHOD_WRAPPER = "CURRENT_METHOD_WRAPPER";
 
-  private final Map<String, Object> properties;
-  private final IFernflowerLogger logger;
-  private final StructContext structContext;
-  private final ClassesProcessor classProcessor;
-  private final PoolInterceptor poolInterceptor;
+  protected final Map<String, Object> properties;
+  protected final IFernflowerLogger logger;
+  protected final StructContext structContext;
+  protected final ClassesProcessor classProcessor;
+  protected final PoolInterceptor poolInterceptor;
   private ImportCollector importCollector;
   private VarProcessor varProcessor;
   private CounterContainer counterContainer;
