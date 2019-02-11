@@ -2,6 +2,7 @@
 package org.jetbrains.java.decompiler.struct;
 
 import org.jetbrains.java.decompiler.main.DecompilerContext;
+import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
 import org.jetbrains.java.decompiler.util.DataInputFullStream;
@@ -123,6 +124,7 @@ public class StructContext {
   }
 
   private void addArchive(String path, File file, int type, boolean isOwn) throws IOException {
+    DecompilerContext.getLogger().writeMessage("Adding Archive: " + file.getAbsolutePath(), IFernflowerLogger.Severity.TRACE);
     try (ZipFile archive = type == ContextUnit.TYPE_JAR ? new JarFile(file) : new ZipFile(file)) {
       Enumeration<? extends ZipEntry> entries = archive.entries();
       while (entries.hasMoreElements()) {
@@ -140,6 +142,7 @@ public class StructContext {
         String name = entry.getName();
         if (!entry.isDirectory()) {
           if (name.endsWith(".class")) {
+            DecompilerContext.getLogger().writeMessage(" Loading Class: " + name, IFernflowerLogger.Severity.TRACE);
             byte[] bytes = InterpreterUtil.getBytes(archive, entry);
             StructClass cl = new StructClass(bytes, isOwn, loader);
             classes.put(cl.qualifiedName, cl);
