@@ -13,11 +13,11 @@ public interface IFabricResultSaver extends IResultSaver {
     return null;
   }
 
-  default String getFieldDoc(StructField structField) {
+  default String getFieldDoc(StructClass structClass, StructField structField) {
     return null;
   }
 
-  default String getMethodDoc(StructMethod structMethod) {
+  default String getMethodDoc(StructClass structClass, StructMethod structMethod) {
     return null;
   }
 }

@@ -391,7 +391,7 @@ public class ClassWriter {
       appendComment(buffer, "synthetic field", indent);
     }
 
-    getFabricSaver().ifPresent(rs -> appendJavaDoc(buffer, rs.getFieldDoc(fd), indent));
+    getFabricSaver().ifPresent(rs -> appendJavaDoc(buffer, rs.getFieldDoc(cl, fd), indent));
 
     appendAnnotations(buffer, indent, fd, TypeAnnotation.FIELD);
 
@@ -621,7 +621,7 @@ public class ClassWriter {
         appendComment(buffer, "bridge method", indent);
       }
 
-      getFabricSaver().ifPresent(rs -> appendJavaDoc(buffer, rs.getMethodDoc(mt), indent));
+      getFabricSaver().ifPresent(rs -> appendJavaDoc(buffer, rs.getMethodDoc(cl, mt), indent));
 
       appendAnnotations(buffer, indent, mt, TypeAnnotation.METHOD_RETURN_TYPE);
 
