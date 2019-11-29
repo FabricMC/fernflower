@@ -160,4 +160,8 @@ public class StructContext {
   public Map<String, StructClass> getClasses() {
     return classes;
   }
+
+  public IResultSaver getSaver() {
+    return saver;
+  }
 }
