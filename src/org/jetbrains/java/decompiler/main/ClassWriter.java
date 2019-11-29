@@ -958,7 +958,7 @@ public class ClassWriter {
   }
 
   private static void appendJavaDoc(TextBuffer buffer, String javaDoc, int indent) {
-    if(javaDoc == null) return;
+    if (javaDoc == null) return;
     buffer.appendIndent(indent).append("/**").appendLineSeparator();
     for (String s : javaDoc.split("\n")) {
       buffer.appendIndent(indent).append(" * ").append(s).appendLineSeparator();
