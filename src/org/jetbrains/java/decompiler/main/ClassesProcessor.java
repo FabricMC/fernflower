@@ -320,7 +320,7 @@ public class ClassesProcessor implements CodeConstants {
       new NestedMemberAccess().propagateMemberAccess(root);
 
       TextBuffer classBuffer = new TextBuffer(AVERAGE_CLASS_SIZE);
-      new ClassWriter(context).classToJava(root, classBuffer, 0, null);
+      new ClassWriter().classToJava(root, classBuffer, 0, null);
 
       int index = cl.qualifiedName.lastIndexOf("/");
       if (index >= 0) {

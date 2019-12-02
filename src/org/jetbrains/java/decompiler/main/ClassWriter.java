@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.main;
 
-import net.fabricmc.fernflower.api.IFabricResultSaver;
+import net.fabricmc.fernflower.api.IFabricJavadocProvider;
 import org.jetbrains.java.decompiler.code.CodeConstants;
 import org.jetbrains.java.decompiler.main.ClassesProcessor.ClassNode;
 import org.jetbrains.java.decompiler.main.collectors.BytecodeMappingTracer;
@@ -16,7 +16,6 @@ import org.jetbrains.java.decompiler.modules.decompiler.vars.VarTypeProcessor;
 import org.jetbrains.java.decompiler.modules.decompiler.vars.VarVersionPair;
 import org.jetbrains.java.decompiler.modules.renamer.PoolInterceptor;
 import org.jetbrains.java.decompiler.struct.StructClass;
-import org.jetbrains.java.decompiler.struct.StructContext;
 import org.jetbrains.java.decompiler.struct.StructField;
 import org.jetbrains.java.decompiler.struct.StructMember;
 import org.jetbrains.java.decompiler.struct.StructMethod;
@@ -33,15 +32,11 @@ import java.util.*;
 
 public class ClassWriter {
   private final PoolInterceptor interceptor;
-  private final StructContext context;
-
-  public ClassWriter(StructContext context) {
-    interceptor = DecompilerContext.getPoolInterceptor();
-    this.context = context;
-  }
+  private final IFabricJavadocProvider javadocProvider;
 
   public ClassWriter() {
-    this(null);
+    interceptor = DecompilerContext.getPoolInterceptor();
+    javadocProvider = (IFabricJavadocProvider) DecompilerContext.getProperty(IFabricJavadocProvider.PROPERTY_NAME);
   }
 
   private static void invokeProcessors(ClassNode node) {
@@ -300,7 +295,9 @@ public class ClassWriter {
       appendComment(buffer, "synthetic class", indent);
     }
 
-    getFabricSaver().ifPresent(rs -> appendJavaDoc(buffer, rs.getClassDoc(cl), indent));
+    if (javadocProvider != null) {
+      appendJavadoc(buffer, javadocProvider.getClassDoc(cl), indent);
+    }
 
     appendAnnotations(buffer, indent, cl, -1);
 
@@ -391,8 +388,9 @@ public class ClassWriter {
       appendComment(buffer, "synthetic field", indent);
     }
 
-    getFabricSaver().ifPresent(rs -> appendJavaDoc(buffer, rs.getFieldDoc(cl, fd), indent));
-
+    if (javadocProvider != null) {
+      appendJavadoc(buffer, javadocProvider.getFieldDoc(cl, fd), indent);
+    }
     appendAnnotations(buffer, indent, fd, TypeAnnotation.FIELD);
 
     buffer.appendIndent(indent);
@@ -621,8 +619,9 @@ public class ClassWriter {
         appendComment(buffer, "bridge method", indent);
       }
 
-      getFabricSaver().ifPresent(rs -> appendJavaDoc(buffer, rs.getMethodDoc(cl, mt), indent));
-
+      if (javadocProvider != null) {
+        appendJavadoc(buffer, javadocProvider.getMethodDoc(cl, mt), indent);
+      }
       appendAnnotations(buffer, indent, mt, TypeAnnotation.METHOD_RETURN_TYPE);
 
       buffer.appendIndent(indent);
@@ -957,7 +956,7 @@ public class ClassWriter {
     buffer.appendIndent(indent).append("// $FF: ").append(comment).appendLineSeparator();
   }
 
-  private static void appendJavaDoc(TextBuffer buffer, String javaDoc, int indent) {
+  private static void appendJavadoc(TextBuffer buffer, String javaDoc, int indent) {
     if (javaDoc == null) return;
     buffer.appendIndent(indent).append("/**").appendLineSeparator();
     for (String s : javaDoc.split("\n")) {
@@ -1107,12 +1106,5 @@ public class ClassWriter {
     }
 
     buffer.append('>');
-  }
-
-  private Optional<IFabricResultSaver> getFabricSaver() {
-    if (context != null && context.getSaver() instanceof IFabricResultSaver) {
-      return Optional.of((IFabricResultSaver) context.getSaver());
-    }
-    return Optional.empty();
   }
 }
