@@ -129,7 +129,6 @@ public class ContextUnit {
           }
         }
 
-        final long start = System.currentTimeMillis();
         final List<Future<?>> futures = new LinkedList<>();
         final ExecutorService decompileExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         final DecompilerContext rootContext = DecompilerContext.getCurrentContext();
@@ -166,8 +165,6 @@ public class ContextUnit {
         }
 
         resultSaver.closeArchive(archivePath, filename);
-
-        System.out.println("Decompiled in " + (System.currentTimeMillis() - start) / 1000 + "s");
     }
   }
 
