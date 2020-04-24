@@ -130,7 +130,7 @@ public class ContextUnit {
         }
 
         final List<Future<?>> futures = new LinkedList<>();
-        final ExecutorService decompileExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        final ExecutorService decompileExecutor = Executors.newFixedThreadPool(Integer.parseInt((String) DecompilerContext.getProperty(IFernflowerPreferences.THREADS)));
         final DecompilerContext rootContext = DecompilerContext.getCurrentContext();
 
         // classes
