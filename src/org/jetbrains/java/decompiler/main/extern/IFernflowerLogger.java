@@ -33,17 +33,19 @@ public abstract class IFernflowerLogger {
 
   public void startReadingClass(String className) { }
 
-  public void endReadingClass() { }
+  public void endReadingClass(String className) { }
 
   public void startClass(String className) { }
 
-  public void endClass() { }
+  public void endClass(String className) { }
 
   public void startMethod(String methodName) { }
 
-  public void endMethod() { }
+  public void endMethod(String methodName) { }
 
   public void startWriteClass(String className) { }
 
-  public void endWriteClass() { }
+  public void endWriteClass(String className) { }
+
+  abstract public IFernflowerLogger clone();
 }

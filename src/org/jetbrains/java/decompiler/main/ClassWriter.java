@@ -135,7 +135,7 @@ public class ClassWriter {
       DecompilerContext.setProperty(DecompilerContext.CURRENT_CLASS_NODE, outerNode);
     }
 
-    DecompilerContext.getLogger().endWriteClass();
+    DecompilerContext.getLogger().endWriteClass(node.simpleName);
   }
 
   public void classToJava(ClassNode node, TextBuffer buffer, int indent, BytecodeMappingTracer tracer) {
@@ -145,12 +145,12 @@ public class ClassWriter {
     int startLine = tracer != null ? tracer.getCurrentSourceLine() : 0;
     BytecodeMappingTracer dummy_tracer = new BytecodeMappingTracer(startLine);
 
+    ClassWrapper wrapper = node.getWrapper();
+    StructClass cl = wrapper.getClassStruct();
+
     try {
       // last minute processing
       invokeProcessors(node);
-
-      ClassWrapper wrapper = node.getWrapper();
-      StructClass cl = wrapper.getClassStruct();
 
       DecompilerContext.getLogger().startWriteClass(cl.qualifiedName);
 
@@ -262,7 +262,7 @@ public class ClassWriter {
       DecompilerContext.setProperty(DecompilerContext.CURRENT_CLASS_NODE, outerNode);
     }
 
-    DecompilerContext.getLogger().endWriteClass();
+    DecompilerContext.getLogger().endWriteClass(cl.qualifiedName);
   }
 
   @SuppressWarnings("SpellCheckingInspection")

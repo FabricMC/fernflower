@@ -165,10 +165,10 @@ public class ClassWrapper {
         }
       }
 
-      DecompilerContext.getLogger().endMethod();
+      DecompilerContext.getLogger().endMethod(mt.getName() + " " + mt.getDescriptor());
     }
 
-    DecompilerContext.getLogger().endClass();
+    DecompilerContext.getLogger().endClass(classStruct.qualifiedName);
   }
 
   @SuppressWarnings("deprecation")

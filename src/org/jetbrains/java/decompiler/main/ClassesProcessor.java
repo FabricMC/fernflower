@@ -367,7 +367,7 @@ public class ClassesProcessor implements CodeConstants {
     }
     finally {
       destroyWrappers(root);
-      DecompilerContext.getLogger().endReadingClass();
+      DecompilerContext.getLogger().endReadingClass(cl.qualifiedName);
     }
   }
 

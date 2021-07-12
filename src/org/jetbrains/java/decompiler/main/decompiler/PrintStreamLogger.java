@@ -40,10 +40,10 @@ public class PrintStreamLogger extends IFernflowerLogger {
   }
 
   @Override
-  public void endReadingClass() {
+  public void endReadingClass(String className) {
     if (accepts(Severity.INFO)) {
       --indent;
-      writeMessage("... done", Severity.INFO);
+      writeMessage("Decompiled  class " + className, Severity.INFO);
     }
   }
 
@@ -56,10 +56,10 @@ public class PrintStreamLogger extends IFernflowerLogger {
   }
 
   @Override
-  public void endClass() {
+  public void endClass(String className) {
     if (accepts(Severity.INFO)) {
       --indent;
-      writeMessage("... proceeded", Severity.TRACE);
+      writeMessage("Processed  class " + className, Severity.TRACE);
     }
   }
 
@@ -72,10 +72,10 @@ public class PrintStreamLogger extends IFernflowerLogger {
   }
 
   @Override
-  public void endMethod() {
+  public void endMethod(String methodName) {
     if (accepts(Severity.INFO)) {
       --indent;
-      writeMessage("... proceeded", Severity.TRACE);
+      writeMessage("Processed  method  " + methodName, Severity.TRACE);
     }
   }
 
@@ -88,10 +88,15 @@ public class PrintStreamLogger extends IFernflowerLogger {
   }
 
   @Override
-  public void endWriteClass() {
+  public void endWriteClass(String className) {
     if (accepts(Severity.INFO)) {
       --indent;
-      writeMessage("... written", Severity.TRACE);
+      writeMessage("written class " + className, Severity.TRACE);
     }
+  }
+
+  @Override
+  public IFernflowerLogger clone() {
+    return new PrintStreamLogger(stream);
   }
 }

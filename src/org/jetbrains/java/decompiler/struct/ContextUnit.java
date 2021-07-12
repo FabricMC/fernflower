@@ -176,7 +176,7 @@ public class ContextUnit {
     if (current == null) {
       current = new DecompilerContext(
         new HashMap<>(rootContext.properties),
-        rootContext.logger,
+        rootContext.logger.clone(),
         rootContext.structContext,
         rootContext.classProcessor,
         rootContext.poolInterceptor
