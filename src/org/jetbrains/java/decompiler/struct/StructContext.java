@@ -2,6 +2,7 @@
 package org.jetbrains.java.decompiler.struct;
 
 import org.jetbrains.java.decompiler.main.DecompilerContext;
+import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
 import org.jetbrains.java.decompiler.util.DataInputFullStream;
@@ -12,6 +13,9 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -52,9 +56,21 @@ public class StructContext {
   }
 
   public void saveContext() {
+    final ExecutorService decompileExecutor = Executors.newFixedThreadPool(Integer.parseInt((String) DecompilerContext.getProperty(IFernflowerPreferences.THREADS)));
     for (ContextUnit unit : units.values()) {
       if (unit.isOwn()) {
-        unit.save();
+        unit.save(decompileExecutor);
+      }
+    }
+    decompileExecutor.shutdown();
+    try {
+      decompileExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+    } catch (InterruptedException e) {
+      decompileExecutor.shutdownNow();
+    }
+    for (ContextUnit unit : units.values()) {
+      if (unit.isOwn()) {
+        unit.close();
       }
     }
   }

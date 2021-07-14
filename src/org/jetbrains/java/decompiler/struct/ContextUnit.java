@@ -82,7 +82,8 @@ public class ContextUnit {
     classes = lstClasses;
   }
 
-  public void save() {
+  public void save(ExecutorService decompileExecutor) {
+    final DecompilerContext rootContext = DecompilerContext.getCurrentContext();
     switch (type) {
       case TYPE_FOLDER:
         // create folder
@@ -101,14 +102,17 @@ public class ContextUnit {
           }
           String entryName = decompiledData.getClassEntryName(cl, classEntries.get(i));
           if (entryName != null) {
-            String content = decompiledData.getClassContent(cl);
-            if (content != null) {
-              int[] mapping = null;
-              if (DecompilerContext.getOption(IFernflowerPreferences.BYTECODE_SOURCE_MAPPING)) {
-                mapping = DecompilerContext.getBytecodeSourceMapper().getOriginalLinesMapping();
+            decompileExecutor.submit(() -> {
+              setContext(rootContext);
+              String content = decompiledData.getClassContent(cl);
+              if (content != null) {
+                int[] mapping = null;
+                if (DecompilerContext.getOption(IFernflowerPreferences.BYTECODE_SOURCE_MAPPING)) {
+                  mapping = DecompilerContext.getBytecodeSourceMapper().getOriginalLinesMapping();
+                }
+                resultSaver.saveClassFile(filename, cl.qualifiedName, entryName, content, mapping);
               }
-              resultSaver.saveClassFile(filename, cl.qualifiedName, entryName, content, mapping);
-            }
+            });
           }
         }
 
@@ -132,16 +136,12 @@ public class ContextUnit {
           }
         }
 
-        final List<Future<?>> futures = new LinkedList<>();
-        final ExecutorService decompileExecutor = Executors.newFixedThreadPool(Integer.parseInt((String) DecompilerContext.getProperty(IFernflowerPreferences.THREADS)));
-        final DecompilerContext rootContext = DecompilerContext.getCurrentContext();
-
         // classes
         for (int i = 0; i < classes.size(); i++) {
           StructClass cl = classes.get(i);
           String entryName = decompiledData.getClassEntryName(cl, classEntries.get(i));
           if (entryName != null) {
-            futures.add(decompileExecutor.submit(() -> {
+            decompileExecutor.submit(() -> {
               setContext(rootContext);
               String content = decompiledData.getClassContent(cl);
               int[] mapping = null;
@@ -153,21 +153,15 @@ public class ContextUnit {
               } else {
                 resultSaver.saveClassEntry(archivePath, filename, cl.qualifiedName, entryName, content);
               }
-            }));
+            });
           }
         }
+    }
+  }
 
-        decompileExecutor.shutdown();
-
-        for (Future<?> future : futures) {
-          try {
-            future.get();
-          } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-          }
-        }
-
-        resultSaver.closeArchive(archivePath, filename);
+  public void close() {
+    if (type == TYPE_ZIP || type == TYPE_JAR) {
+      resultSaver.closeArchive(archivePath, filename);
     }
   }
 
